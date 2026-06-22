@@ -5,6 +5,11 @@ const inputConcurrency = document.getElementById('input-concurrency');
 const inputDelay = document.getElementById('input-delay');
 const inputIgnoreQuery = document.getElementById('input-ignore-query');
 const inputOutputDir = document.getElementById('input-output-dir');
+const inputUrlFrom = document.getElementById('input-url-from');
+const inputUrlTo = document.getElementById('input-url-to');
+const rangePreview = document.getElementById('range-preview');
+const rangeFromLabel = document.getElementById('range-from-label');
+const rangeToLabel = document.getElementById('range-to-label');
 
 const valLimit = document.getElementById('val-limit');
 const valConcurrency = document.getElementById('val-concurrency');
@@ -51,6 +56,25 @@ inputConcurrency.addEventListener('input', () => {
 inputDelay.addEventListener('input', () => {
     valDelay.textContent = `${inputDelay.value}s`;
 });
+
+// Range URL preview: show live feedback when user types Da/A values
+function updateRangePreview() {
+    const from = parseInt(inputUrlFrom.value);
+    const to = parseInt(inputUrlTo.value);
+    const hasFrom = inputUrlFrom.value !== '' && !isNaN(from);
+    const hasTo = inputUrlTo.value !== '' && !isNaN(to);
+
+    if (hasFrom || hasTo) {
+        rangeFromLabel.textContent = hasFrom ? `#${from.toLocaleString('it-IT')}` : '#1';
+        rangeToLabel.textContent = hasTo ? `#${to.toLocaleString('it-IT')}` : 'fine';
+        rangePreview.classList.remove('hidden');
+    } else {
+        rangePreview.classList.add('hidden');
+    }
+}
+
+inputUrlFrom.addEventListener('input', updateRangePreview);
+inputUrlTo.addEventListener('input', updateRangePreview);
 
 // Helper: Format Time (Seconds -> MM:SS)
 function formatTime(seconds) {
@@ -238,6 +262,12 @@ async function startCrawl() {
     const delay = parseFloat(inputDelay.value);
     const ignoreQuery = inputIgnoreQuery.checked;
     const outputDir = inputOutputDir.value.trim();
+
+    // URL range (optional)
+    const urlFromRaw = inputUrlFrom.value.trim();
+    const urlToRaw = inputUrlTo.value.trim();
+    const urlFrom = urlFromRaw !== '' ? parseInt(urlFromRaw) : null;
+    const urlTo = urlToRaw !== '' ? parseInt(urlToRaw) : null;
     
     btnStart.disabled = true;
     btnStop.disabled = false;
@@ -253,7 +283,9 @@ async function startCrawl() {
                 concurrency,
                 delay,
                 ignore_query: ignoreQuery,
-                output_dir: outputDir
+                output_dir: outputDir,
+                url_from: urlFrom,
+                url_to: urlTo
             })
         });
         

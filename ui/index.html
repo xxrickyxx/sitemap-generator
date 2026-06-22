@@ -94,10 +94,32 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="input-output-dir">Cartella di Destinazione (Opzionale)</label>
+                            <div class="label-with-val">
+                                <label for="input-output-dir">Cartella di Destinazione (Opzionale)</label>
+                            </div>
                             <div class="input-wrapper">
                                 <i class="fa-solid fa-folder input-icon"></i>
                                 <input type="text" id="input-output-dir" placeholder="Predefinita: \sitemaps">
+                            </div>
+                        </div>
+
+                        <!-- URL Range -->
+                        <div class="form-group range-group">
+                            <label><i class="fa-solid fa-arrows-left-right"></i> Range URL da esportare</label>
+                            <p class="range-hint">Lascia vuoto per esportare tutto. Usa per generare batch separati (es. 1–5000, poi 5001–10000).</p>
+                            <div class="range-inputs-row">
+                                <div class="range-input-box">
+                                    <label for="input-url-from">Da URL #</label>
+                                    <input type="number" id="input-url-from" min="1" step="1" placeholder="1">
+                                </div>
+                                <div class="range-separator"><i class="fa-solid fa-arrow-right"></i></div>
+                                <div class="range-input-box">
+                                    <label for="input-url-to">A URL #</label>
+                                    <input type="number" id="input-url-to" min="1" step="1" placeholder="Tutti">
+                                </div>
+                            </div>
+                            <div id="range-preview" class="range-preview hidden">
+                                Esporterà le URL <strong id="range-from-label">1</strong> → <strong id="range-to-label">5000</strong>
                             </div>
                         </div>
 

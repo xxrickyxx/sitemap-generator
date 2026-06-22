@@ -722,6 +722,104 @@ input[type="range"]::-webkit-slider-thumb:hover {
 .log-warning { color: var(--warning); }
 .log-system { color: var(--info); font-weight: 500; border-left: 2px solid var(--info); padding-left: 6px; }
 
+/* URL Range Group */
+.range-group {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    padding: 14px 16px;
+    gap: 12px;
+}
+
+.range-group > label {
+    color: var(--text-primary);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.range-group > label i {
+    color: var(--accent);
+}
+
+.range-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-top: -4px;
+}
+
+.range-inputs-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.range-input-box {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.range-input-box label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.range-input-box input[type="number"] {
+    width: 100%;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 9px 12px;
+    border-radius: var(--border-radius-sm);
+    font-size: 14px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    -moz-appearance: textfield;
+}
+
+.range-input-box input[type="number"]::-webkit-outer-spin-button,
+.range-input-box input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.range-input-box input[type="number"]:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.range-separator {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding-bottom: 10px;
+    flex-shrink: 0;
+}
+
+.range-preview {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: var(--border-radius-sm);
+    padding: 8px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.range-preview strong {
+    color: var(--accent);
+    font-family: var(--font-mono);
+}
+
 /* Helpers */
 .hidden {
     display: none !important;

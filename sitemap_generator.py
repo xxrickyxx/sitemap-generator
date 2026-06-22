@@ -38,7 +38,8 @@ class LinkParser(HTMLParser):
                     self.links.append(value.strip())
 
 class SitemapCrawler:
-    def __init__(self, start_url, max_urls=5000, delay=0.1, concurrency=3, ignore_query=True, output_dir=None):
+    def __init__(self, start_url, max_urls=5000, delay=0.1, concurrency=3, ignore_query=True, output_dir=None,
+                 url_from=None, url_to=None):
         self.start_url = self.normalize_start_url(start_url)
         self.parsed_start = urlparse(self.start_url)
         self.target_domain = self.parsed_start.netloc
@@ -47,6 +48,9 @@ class SitemapCrawler:
         self.concurrency = concurrency
         self.ignore_query = ignore_query
         self.output_dir = output_dir or os.path.dirname(os.path.abspath(__file__))
+        # Range filter: 1-based indices (None = no limit)
+        self.url_from = max(1, int(url_from)) if url_from is not None else None
+        self.url_to = max(1, int(url_to)) if url_to is not None else None
         
         # Crawler State
         self.visited = set()
@@ -218,6 +222,10 @@ class SitemapCrawler:
                 self.queue.append(self.start_url)
                 self.visited.clear()
             self.log_info(f"Starting crawl for {self.start_url} (Max threads: {self.concurrency}, Delay: {self.delay}s)")
+            if self.url_from or self.url_to:
+                frm = self.url_from or 1
+                to_ = self.url_to or '∞'
+                self.log_info(f"Range output attivo: URL #{frm} → #{to_}")
             
         # Spawn workers
         for i in range(self.concurrency):
@@ -269,8 +277,14 @@ class SitemapCrawler:
         
         urls = sorted(list(set(self.sitemap_urls)))
         if not urls:
-            # Create a single empty sitemap or at least the start_url
             urls = [self.start_url]
+
+        # Apply range filter (1-based, inclusive)
+        if self.url_from is not None or self.url_to is not None:
+            frm = (self.url_from - 1) if self.url_from else 0          # convert to 0-based
+            to_ = self.url_to if self.url_to else len(urls)             # url_to is already 1-based inclusive
+            urls = urls[frm:to_]
+            self.log_info(f"Range applicato: esportando {len(urls)} URL (da #{frm+1} a #{min(to_, frm+len(urls))})")
             
         # Helper to format dates
         today = time.strftime("%Y-%m-%d")
@@ -470,6 +484,8 @@ class SitemapServerHandler(http.server.BaseHTTPRequestHandler):
             concurrency = int(params.get('concurrency', 3))
             ignore_query = bool(params.get('ignore_query', True))
             output_dir = params.get('output_dir', '').strip()
+            url_from = params.get('url_from', None)   # 1-based start index (or None)
+            url_to   = params.get('url_to',   None)   # 1-based end index (or None)
             
             if not output_dir:
                 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -484,7 +500,9 @@ class SitemapServerHandler(http.server.BaseHTTPRequestHandler):
                 delay=delay,
                 concurrency=concurrency,
                 ignore_query=ignore_query,
-                output_dir=output_dir
+                output_dir=output_dir,
+                url_from=url_from,
+                url_to=url_to
             )
             crawler_instance.start()
             self.send_json({"status": "started"})
