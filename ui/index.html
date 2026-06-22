@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sitemap Generator - miamai.it</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for beautiful icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="dark-mode">
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon"><i class="fa-solid fa-sitemap"></i></div>
+                <div>
+                    <h1>Sitemap Generator Pro</h1>
+                    <p class="subtitle">Ottimizzato per Google Search Console</p>
+                </div>
+            </div>
+            <div class="status-indicator-container">
+                <span id="server-status-dot" class="status-dot pulse-idle"></span>
+                <span id="server-status-text" class="status-text">Server Pronto</span>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-workspace">
+            
+            <!-- Left: Settings & Control -->
+            <section class="panel settings-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-sliders"></i> Configurazioni</h2>
+                </div>
+                <div class="panel-body">
+                    <form id="crawler-form" onsubmit="event.preventDefault();">
+                        
+                        <div class="form-group">
+                            <label for="input-url">URL di Partenza</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-globe input-icon"></i>
+                                <input type="url" id="input-url" value="https://miamai.it" required placeholder="https://example.com">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-val">
+                                <label for="input-limit">Limite URL per File</label>
+                                <span id="val-limit" class="badge">5000</span>
+                            </div>
+                            <input type="range" id="input-limit" min="10" max="50000" step="50" value="5000">
+                            <div class="range-labels">
+                                <span>10</span>
+                                <span>Google Limit (50k)</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-val">
+                                <label for="input-concurrency">Richieste Parallele</label>
+                                <span id="val-concurrency" class="badge">3</span>
+                            </div>
+                            <input type="range" id="input-concurrency" min="1" max="10" step="1" value="3">
+                            <div class="range-labels">
+                                <span>1</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="label-with-val">
+                                <label for="input-delay">Ritardo tra Richieste (sec)</label>
+                                <span id="val-delay" class="badge">0.1s</span>
+                            </div>
+                            <input type="range" id="input-delay" min="0" max="5" step="0.1" value="0.1">
+                            <div class="range-labels">
+                                <span>0s</span>
+                                <span>5s</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label class="switch-container">
+                                <input type="checkbox" id="input-ignore-query" checked>
+                                <span class="switch-slider"></span>
+                                <span class="switch-label">Ignora parametri query (?id=...)</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="input-output-dir">Cartella di Destinazione (Opzionale)</label>
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-folder input-icon"></i>
+                                <input type="text" id="input-output-dir" placeholder="Predefinita: \sitemaps">
+                            </div>
+                        </div>
+
+                        <div class="action-buttons">
+                            <button type="button" id="btn-start" class="btn btn-primary btn-glow">
+                                <i class="fa-solid fa-play"></i> Avvia Scansione
+                            </button>
+                            <button type="button" id="btn-stop" class="btn btn-danger" disabled>
+                                <i class="fa-solid fa-stop"></i> Ferma Scansione
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right: Stats & Progress -->
+            <div class="right-column">
+                
+                <!-- Progress & Stats Cards -->
+                <section class="panel monitor-panel">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-chart-line"></i> Monitor di Sistema</h2>
+                        <div id="elapsed-time" class="timer-badge">00:00</div>
+                    </div>
+                    <div class="panel-body">
+                        
+                        <!-- Progress Bar Container -->
+                        <div class="progress-container">
+                            <div class="progress-header">
+                                <span id="progress-state">Stato: In Attesa</span>
+                                <span id="progress-percent">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="progress-bar" class="progress-bar-fill" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Grid -->
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon icon-blue"><i class="fa-solid fa-magnifying-glass"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Esplorate (200 OK)</span>
+                                    <span id="stat-discovered" class="stat-value">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-purple"><i class="fa-solid fa-list-check"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-label">In Coda scansione</span>
+                                    <span id="stat-queue" class="stat-value">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-green"><i class="fa-solid fa-download"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Totali Elaborate</span>
+                                    <span id="stat-total" class="stat-value">0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon icon-red"><i class="fa-solid fa-circle-exclamation"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-label">Errori / Blocchi</span>
+                                    <span id="stat-errors" class="stat-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <!-- Output Files Panel (Hidden initially) -->
+                <section id="output-panel" class="panel output-panel hidden">
+                    <div class="panel-header">
+                        <h2><i class="fa-solid fa-circle-check text-success"></i> Sitemaps Generate!</h2>
+                        <button id="btn-open-folder" class="btn btn-secondary btn-sm">
+                            <i class="fa-solid fa-folder-open"></i> Apri Cartella
+                        </button>
+                    </div>
+                    <div class="panel-body">
+                        <p class="output-desc">I seguenti file XML sono pronti per essere caricati su Google Search Console:</p>
+                        <ul id="file-list" class="file-list">
+                            <!-- Populated dynamically -->
+                        </ul>
+                        <div class="output-location">
+                            <span class="label">Salvati in:</span>
+                            <code id="output-path-label"></code>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+
+        <!-- Bottom: Live Logs -->
+        <section class="panel console-panel">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-terminal"></i> Console Log in Tempo Reale</h2>
+                <div class="console-actions">
+                    <label class="console-switch">
+                        <input type="checkbox" id="autoscroll-check" checked>
+                        <span>Auto-scroll</span>
+                    </label>
+                    <button id="btn-clear-console" class="btn btn-link btn-sm">
+                        <i class="fa-solid fa-trash-can"></i> Pulisci
+                    </button>
+                </div>
+            </div>
+            <div class="panel-body console-body">
+                <div id="console-output" class="console-output">
+                    <div class="log-line log-system">Pronto ad avviare la scansione. Configura i parametri a sinistra e clicca "Avvia Scansione".</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>

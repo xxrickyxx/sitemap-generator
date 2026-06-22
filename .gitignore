@@ -1,0 +1,27 @@
+# Output sitemaps generate
+sitemaps/
+
+# File di test
+test_file.txt
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Ambienti virtuali
+venv/
+.env/
+env/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
